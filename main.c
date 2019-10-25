@@ -104,7 +104,17 @@ int addProducts(PRODUCT *pointer){
 }
 
 void addAddress(ADDRESS *pointer){
-	
+	printf("ZIP code: ");
+	gets(pointer->zip);
+	printf("Street: ");
+	gets(pointer->street);
+	printf("City: ");
+	gets(pointer->city);
+	printf("State: ");
+	gets(pointer->state);
+	printf("Number: ");
+	fflush(stdin);
+	scanf("%d", &pointer->number);
 }
 
 int addClients(CLIENT *pointer){
@@ -123,24 +133,65 @@ int addClients(CLIENT *pointer){
 		fflush(stdin);
 		printf("E-mail: ");
 		gets(pointer->email);//////////////////////////////////////////////////////////////STOPPED HERE 
-		printf("Value from provider: ");
-		scanf("%f", &pointer->value_to_buy);
-		printf("** 1 - Calculate value to sell | 0 - Continue **\n");
-		scanf("%d", &o);
-		if(o == 1){
-			float value = pointer->value_to_buy * 0,3;
-			printf("** Calculated value: %.2f **\n", (pointer->value_to_buy + value));
-			pointer->value_to_sell = (pointer->value_to_buy + value);
-		}else{
-			printf("Value to sell: ");
-			scanf("%f", &pointer->value_to_sell);
-		}
-		fprintf(file_products, "%d ", pointer->code);
-		fprintf(file_products, "%s ", pointer->name);
-		fclose(file_products);
+		printf("Address: ");
+		addAddress(pointer->address);
+		fprintf(file_clients, "%d ", pointer->id);
+		fprintf(file_clients, "%s ", pointer->name);
+		fclose(file_clients);
 	}
-	return 1;
+	return 2;
 }
+
+int addPurchase(PURCHASE *pointer){
+	FILE *file_purchase;
+	file_purchase = fopen("purchases.txt", "a");
+	printf("Client ID: ");
+	scanf("%d", &pointer->id_client);
+	printf("Product code: ");
+	scanf("%d", &pointer->code_product);
+	printf("Purchase description: ");
+	gets(pointer->purchase_description);
+	printf("Purchase status (start, in progress, done): ");
+	gets(pointer->purchase_status);
+	fprintf(file_purchase, "%d ", pointer->id_client);
+	fprintf(file_purchase, "%d ", pointer->code_product);
+	fclose(file_purchase);
+	return 3;
+}
+//>>>>>>>SHIPPING VALUE CALCULATOR
+float ShippingValue(int zip){
+	if(zip == 57)
+		return 0.0;
+	else if(zip >= 40 && <= 65)
+		return 50.0;
+	else
+		return 80.0;
+}
+
+int addOrder(ORDER *pointer){
+	int zip;
+	FILE *file_order;
+	file_order = fopen("orders.txt", "a");
+	printf("Client ID: ");
+	scanf("%d", &pointer->id_client);
+	printf("Product code: ");
+	scanf("%d", &pointer->code_product);
+	printf("Order description: ");
+	gets(pointer->purchase_description);
+	printf("Order status (start, in progress, done): ");
+	gets(pointer->purchase_status);
+	printf("First (2) numbers of zip code area: ");
+	fflush(stdin);
+	scanf("%d", &zip);
+	pointer->shipping_value = ShippingValue(zip);
+	printf("** The shipping value for this order is: %.02f **", pointer->shipping_value);
+	fprintf(file_order, "%d ", pointer->id_client);
+	fprintf(file_order, "%d ", pointer->code_product);
+	fclose(file_order);
+	return 4;
+}
+
+//>>>>>>>>>>>>>>>>>>>SHOW AREA<<<<<<<<<<<<<<<<<<
 
 
 //>>>>>MENU AREA
